@@ -29,16 +29,6 @@ type UrukMessage struct {
 	RepoLocation string
 }
 
-func (u Uruk) CreateContainer(message UrukMessage) (container.ContainerCreateCreatedBody, error) {
-	name := message.ImageName
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*15)
-	defer cancel()
-	return u.DClient.ContainerCreate(ctx, &container.Config{
-		Image: name,
-		Env:   []string{},
-	}, nil, nil, "")
-}
-
 func getNewFilename(fileName, src string) string {
 	return strings.Replace(fileName, src, "", -1)
 }
@@ -85,6 +75,16 @@ func tarContents(src string, buffer io.Writer) {
 
 		return nil
 	})
+}
+
+func (u Uruk) CreateContainer(message UrukMessage) (container.ContainerCreateCreatedBody, error) {
+	name := message.ImageName
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*15)
+	defer cancel()
+	return u.DClient.ContainerCreate(ctx, &container.Config{
+		Image: name,
+		Env:   []string{},
+	}, nil, nil, "")
 }
 
 func (u Uruk) CopyToContainer(containerId, repoLocation string) error {
