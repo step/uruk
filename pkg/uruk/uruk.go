@@ -12,6 +12,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/step/saurontypes"
+
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/client"
@@ -22,11 +24,6 @@ import (
 type Uruk struct {
 	QClient q.QueueClient
 	DClient *client.Client
-}
-
-type UrukMessage struct {
-	ImageName    string
-	RepoLocation string
 }
 
 func getNewFilename(fileName, src string) string {
@@ -77,7 +74,7 @@ func tarContents(src string, buffer io.Writer) {
 	})
 }
 
-func (u Uruk) CreateContainer(message UrukMessage) (container.ContainerCreateCreatedBody, error) {
+func (u Uruk) CreateContainer(message saurontypes.UrukMessage) (container.ContainerCreateCreatedBody, error) {
 	name := message.ImageName
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*15)
 	defer cancel()
@@ -106,7 +103,7 @@ func (u Uruk) StartContainer(ctx context.Context, containerId string) error {
 	return u.DClient.ContainerStart(ctx, containerId, types.ContainerStartOptions{})
 }
 
-func (u Uruk) executeJob(urukMessage UrukMessage) {
+func (u Uruk) executeJob(urukMessage saurontypes.UrukMessage) {
 	resp, err := u.CreateContainer(urukMessage)
 	fmt.Println(resp, err)
 	if err != nil {
@@ -145,7 +142,7 @@ func (u Uruk) executeJob(urukMessage UrukMessage) {
 
 func (o Uruk) Start(qName string) {
 	for {
-		var urukMessage UrukMessage
+		var urukMessage saurontypes.UrukMessage
 		msg, err := o.QClient.Dequeue(qName)
 		if err != nil {
 			fmt.Println("Unable to dequeue")
