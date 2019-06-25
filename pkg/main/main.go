@@ -55,6 +55,5 @@ func main() {
 	qClient := RedisClient{client}
 	uruk := u.Uruk{qClient, dClient}
 
-	// qClient.Enqueue("foo", "{\"imageName\":\"orc_sample\", \"repoLocation\":\"luciferankon/master/luciferankon-gauge-js-948694c\"}")
 	uruk.Start("foo")
 }

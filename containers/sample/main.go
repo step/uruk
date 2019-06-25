@@ -33,6 +33,7 @@ func main() {
 
 	resultPath := "/results"
 	resultsFilename := filepath.Join(resultPath, "result.json")
+	os.MkdirAll("/results", 0777)
 	resultsFile, _ := os.OpenFile(resultsFilename, os.O_CREATE|os.O_WRONLY, 0777)
 	defer resultsFile.Close()
 	fmt.Fprintf(resultsFile, "%s", string(bytes))
