@@ -1,18 +1,16 @@
 package uruk
 
 import (
-	"archive/tar"
 	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
 	"io"
 	"os"
-	"path/filepath"
-	"strings"
 	"time"
 
 	"github.com/step/saurontypes"
+	"github.com/step/uruk/pkg/tarutils"
 
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/container"
@@ -24,54 +22,7 @@ import (
 type Uruk struct {
 	QClient q.QueueClient
 	DClient *client.Client
-}
-
-func getNewFilename(fileName, src string) string {
-	return strings.Replace(fileName, src, "", -1)
-}
-
-func tarContents(src string, buffer io.Writer) {
-	tarWriter := tar.NewWriter(buffer)
-	defer tarWriter.Close()
-
-	filepath.Walk(src, func(fileName string, fi os.FileInfo, err error) error {
-
-		if err != nil {
-			return err
-		}
-
-		header, err := tar.FileInfoHeader(fi, fi.Name())
-		if err != nil {
-			return fmt.Errorf("Unable to fetch header for %s", fi.Name())
-		}
-
-		newFilename := getNewFilename(fileName, src)
-		newFilename = filepath.Join("source", newFilename)
-		header.Name = newFilename
-		if err := tarWriter.WriteHeader(header); err != nil {
-			return fmt.Errorf("Unable to write header for %s", fi.Name())
-		}
-
-		if !fi.Mode().IsRegular() {
-			return nil
-		}
-
-		file, err := os.Open(fileName)
-		if err != nil {
-			return fmt.Errorf("Unable to open %s", fileName)
-		}
-
-		if _, err := io.Copy(tarWriter, file); err != nil {
-			return fmt.Errorf("Unable to tar %s", fileName)
-		}
-
-		fmt.Println(" +", header.Name)
-		if err := file.Close(); err != nil {
-			return fmt.Errorf("Unable to close %s", fileName)
-		}
-
-		return nil
-	})
+	Tarable tarutils.Tarable
 }
 
 func (u Uruk) CreateContainer(message saurontypes.UrukMessage) (container.ContainerCreateCreatedBody, error) {
@@ -86,7 +37,7 @@ func (u Uruk) CreateContainer(message saurontypes.UrukMessage) (container.Contai
 
 func (u Uruk) CopyToContainer(containerId, repoLocation string) error {
 	var buffer bytes.Buffer
-	tarContents(repoLocation, &buffer)
+	tarutils.Tar(repoLocation, &buffer, u.Tarable)
 	ctx := context.Background()
 	return u.DClient.CopyToContainer(ctx, containerId, "/", &buffer, types.CopyToContainerOptions{
 		AllowOverwriteDirWithFile: true,
