@@ -1,7 +1,6 @@
 package uruk
 
 import (
-	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -20,48 +19,21 @@ import (
 )
 
 type Uruk struct {
-	QClient q.QueueClient
-	DClient *client.Client
-	Tarable tarutils.Tarable
-}
-
-func (u Uruk) CreateContainer(message saurontypes.UrukMessage) (container.ContainerCreateCreatedBody, error) {
-	name := message.ImageName
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*15)
-	defer cancel()
-	return u.DClient.ContainerCreate(ctx, &container.Config{
-		Image: name,
-		Env:   []string{},
-	}, nil, nil, "")
-}
-
-func (u Uruk) CopyToContainer(containerId, repoLocation string) error {
-	var buffer bytes.Buffer
-	tarutils.Tar(repoLocation, &buffer, u.Tarable)
-	ctx := context.Background()
-	return u.DClient.CopyToContainer(ctx, containerId, "/", &buffer, types.CopyToContainerOptions{
-		AllowOverwriteDirWithFile: true,
-	})
-}
-
-func (u Uruk) CopyFromContainer(containerId, src string) io.ReadCloser {
-	readCloser, _, err := u.DClient.CopyFromContainer(context.Background(), containerId, src)
-	fmt.Println("Error copying", err)
-	return readCloser
-}
-
-func (u Uruk) StartContainer(ctx context.Context, containerId string) error {
-	return u.DClient.ContainerStart(ctx, containerId, types.ContainerStartOptions{})
+	QClient          q.QueueClient
+	DClient          *client.Client
+	Tarable          tarutils.Tarable
+	SourceMountPoint string
+	NumOfWorkers     int
 }
 
 func (u Uruk) executeJob(urukMessage saurontypes.UrukMessage) {
-	resp, err := u.CreateContainer(urukMessage)
+	resp, err := u.createContainer(urukMessage)
 	fmt.Println(resp, err)
 	if err != nil {
 		fmt.Println("error", err)
 	}
 
-	err = u.CopyToContainer(resp.ID, urukMessage.RepoLocation)
+	err = u.copyToContainer(resp.ID, urukMessage.RepoLocation)
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -70,7 +42,7 @@ func (u Uruk) executeJob(urukMessage saurontypes.UrukMessage) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
 	defer cancel()
 
-	err = u.StartContainer(ctx, resp.ID)
+	err = u.startContainer(ctx, resp.ID)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -79,7 +51,7 @@ func (u Uruk) executeJob(urukMessage saurontypes.UrukMessage) {
 	select {
 	case status := <-okCh:
 		fmt.Println("everything ok. container done", status.StatusCode)
-		readCloser := u.CopyFromContainer(resp.ID, "/results/result.json")
+		readCloser := u.copyFromContainer(resp.ID, "/results/result.json")
 		defer readCloser.Close()
 		io.Copy(os.Stdout, readCloser)
 	case <-errCh:
@@ -91,10 +63,22 @@ func (u Uruk) executeJob(urukMessage saurontypes.UrukMessage) {
 	// TODO: InformDB()
 }
 
-func (o Uruk) Start(qName string) {
+func worker(id int, u Uruk, messages <-chan saurontypes.UrukMessage) {
+	for message := range messages {
+		u.executeJob(message)
+	}
+}
+
+func (u Uruk) Start(qName string) {
+	jobs := make(chan saurontypes.UrukMessage, 10)
+
+	for index := 0; index < u.NumOfWorkers; index++ {
+		go worker(index, u, jobs)
+	}
+
 	for {
 		var urukMessage saurontypes.UrukMessage
-		msg, err := o.QClient.Dequeue(qName)
+		msg, err := u.QClient.Dequeue(qName)
 		if err != nil {
 			fmt.Println("Unable to dequeue")
 			continue
@@ -103,6 +87,6 @@ func (o Uruk) Start(qName string) {
 		if err != nil {
 			fmt.Println("Unable to unmarshal", msg)
 		}
-		o.executeJob(urukMessage)
+		jobs <- urukMessage
 	}
 }

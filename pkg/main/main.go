@@ -15,9 +15,11 @@ func main() {
 	tarable := tarutils.NewDefaultTarable("source")
 
 	uruk := u.Uruk{
-		QClient: qClient,
-		DClient: dClient,
-		Tarable: tarable,
+		QClient:          qClient,
+		DClient:          dClient,
+		Tarable:          tarable,
+		SourceMountPoint: sourceMountPoint,
+		NumOfWorkers:     numOfWorkers,
 	}
 
 	uruk.Start(queueName)
