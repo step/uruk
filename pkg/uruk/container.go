@@ -3,8 +3,8 @@ package uruk
 import (
 	"bytes"
 	"context"
-	"fmt"
 	"io"
+	"os"
 	"path/filepath"
 	"time"
 
@@ -36,12 +36,37 @@ func (u Uruk) copyToContainer(containerId, repoLocation string) error {
 	})
 }
 
-func (u Uruk) copyFromContainer(containerId, src string) io.ReadCloser {
+func (u Uruk) copyFromContainer(containerId, src string) (rerr error) {
 	readCloser, _, err := u.DClient.CopyFromContainer(context.Background(), containerId, src)
-	fmt.Println("Error copying", err)
-	return readCloser
+	if err != nil {
+		return err
+	}
+
+	defer func() {
+		if rerr == nil {
+			rerr = readCloser.Close()
+		}
+	}()
+
+	if _, err := io.Copy(os.Stdout, readCloser); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (u Uruk) startContainer(ctx context.Context, containerId string) error {
 	return u.DClient.ContainerStart(ctx, containerId, types.ContainerStartOptions{})
+}
+
+func (u Uruk) killContainer(ctx context.Context, containerId string) error {
+	err := u.DClient.ContainerKill(ctx, containerId, "SIGTERM")
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (u Uruk) removeContainer(ctx context.Context, containerId string) error {
+	return u.DClient.ContainerRemove(context.Background(), containerId, types.ContainerRemoveOptions{Force: true})
 }

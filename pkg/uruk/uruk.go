@@ -4,14 +4,11 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"io"
-	"os"
 	"time"
 
 	"github.com/step/saurontypes"
 	"github.com/step/uruk/pkg/tarutils"
 
-	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/client"
 
@@ -27,12 +24,17 @@ type Uruk struct {
 	NumOfWorkers        int
 }
 
-func (u Uruk) executeJob(urukMessage saurontypes.UrukMessage) error {
+func (u Uruk) executeJob(urukMessage saurontypes.UrukMessage) (rerr error) {
 	resp, err := u.createContainer(urukMessage)
-	// log response and error
 	if err != nil {
 		return ContainerCreationError{urukMessage, err}
 	}
+
+	defer func() {
+		if rerr == nil {
+			rerr = u.removeContainer(context.Background(), resp.ID)
+		}
+	}()
 
 	err = u.copyToContainer(resp.ID, urukMessage.RepoLocation)
 	if err != nil {
@@ -51,16 +53,17 @@ func (u Uruk) executeJob(urukMessage saurontypes.UrukMessage) error {
 	select {
 	case status := <-okCh:
 		fmt.Println("everything ok. container done", status.StatusCode)
-		readCloser := u.copyFromContainer(resp.ID, "/results/result.json")
-		defer readCloser.Close()
-		io.Copy(os.Stdout, readCloser)
-	case <-errCh:
-		fmt.Println("some weird error")
+		if err := u.copyFromContainer(resp.ID, "/results/result.json"); err != nil {
+			return CopyFromContainerError{urukMessage, resp.ID, err}
+		}
+
+	case err := <-errCh:
+		return err
 	case <-ctx.Done():
-		u.DClient.ContainerKill(context.Background(), resp.ID, "SIGTERM")
+		fmt.Println("timed out...")
+		return u.killContainer(context.Background(), resp.ID)
 	}
 
-	u.DClient.ContainerRemove(context.Background(), resp.ID, types.ContainerRemoveOptions{Force: true})
 	// TODO: InformDB()
 	return nil
 }
