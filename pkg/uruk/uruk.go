@@ -19,24 +19,24 @@ import (
 )
 
 type Uruk struct {
-	QClient          q.QueueClient
-	DClient          *client.Client
-	Tarable          tarutils.Tarable
-	SourceMountPoint string
-	NumOfWorkers     int
+	QClient             q.QueueClient
+	DClient             *client.Client
+	Tarable             tarutils.Tarable
+	SourceMountPoint    string
+	ContainerSourcePath string
+	NumOfWorkers        int
 }
 
-func (u Uruk) executeJob(urukMessage saurontypes.UrukMessage) {
+func (u Uruk) executeJob(urukMessage saurontypes.UrukMessage) error {
 	resp, err := u.createContainer(urukMessage)
-	fmt.Println(resp, err)
+	// log response and error
 	if err != nil {
-		fmt.Println("error", err)
+		return ContainerCreationError{urukMessage, err}
 	}
 
 	err = u.copyToContainer(resp.ID, urukMessage.RepoLocation)
 	if err != nil {
-		fmt.Println(err)
-		return
+		return CopyToContainerError{urukMessage, u.SourceMountPoint, u.ContainerSourcePath, err}
 	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
@@ -44,7 +44,7 @@ func (u Uruk) executeJob(urukMessage saurontypes.UrukMessage) {
 
 	err = u.startContainer(ctx, resp.ID)
 	if err != nil {
-		fmt.Println(err)
+		return StartContainerError{resp, urukMessage, err}
 	}
 
 	okCh, errCh := u.DClient.ContainerWait(ctx, resp.ID, container.WaitConditionNotRunning)
@@ -59,13 +59,18 @@ func (u Uruk) executeJob(urukMessage saurontypes.UrukMessage) {
 	case <-ctx.Done():
 		u.DClient.ContainerKill(context.Background(), resp.ID, "SIGTERM")
 	}
+
 	u.DClient.ContainerRemove(context.Background(), resp.ID, types.ContainerRemoveOptions{Force: true})
 	// TODO: InformDB()
+	return nil
 }
 
 func worker(id int, u Uruk, messages <-chan saurontypes.UrukMessage) {
 	for message := range messages {
-		u.executeJob(message)
+		err := u.executeJob(message)
+		if err != nil {
+			fmt.Println(err.Error())
+		}
 	}
 }
 

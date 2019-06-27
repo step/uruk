@@ -8,11 +8,11 @@ import (
 	"path/filepath"
 )
 
-func Tar(src string, buffer io.Writer, tarable Tarable) {
+func Tar(src string, buffer io.Writer, tarable Tarable) error {
 	tarWriter := tar.NewWriter(buffer)
 	defer tarWriter.Close()
 
-	filepath.Walk(src, func(fileName string, fi os.FileInfo, err error) error {
+	return filepath.Walk(src, func(fileName string, fi os.FileInfo, err error) error {
 
 		if err != nil {
 			return err

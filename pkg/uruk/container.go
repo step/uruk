@@ -27,7 +27,9 @@ func (u Uruk) createContainer(message saurontypes.UrukMessage) (container.Contai
 func (u Uruk) copyToContainer(containerId, repoLocation string) error {
 	var buffer bytes.Buffer
 	location := filepath.Join(u.SourceMountPoint, repoLocation)
-	tarutils.Tar(location, &buffer, u.Tarable)
+	if err := tarutils.Tar(location, &buffer, u.Tarable); err != nil {
+		return err
+	}
 	ctx := context.Background()
 	return u.DClient.CopyToContainer(ctx, containerId, "/", &buffer, types.CopyToContainerOptions{
 		AllowOverwriteDirWithFile: true,
