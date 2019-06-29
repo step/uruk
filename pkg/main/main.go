@@ -2,6 +2,8 @@ package main
 
 import (
 	"flag"
+	"log"
+	"os"
 
 	"github.com/step/uruk/pkg/tarutils"
 
@@ -14,6 +16,7 @@ func main() {
 	qClient := getRedisClient()
 	tarable := tarutils.NewDefaultTarable(containerSourcePath)
 
+	logger := log.New(os.Stdout, "uruk ", log.LstdFlags)
 	uruk := u.Uruk{
 		QClient:             qClient,
 		DClient:             dClient,
@@ -21,6 +24,7 @@ func main() {
 		SourceMountPoint:    sourceMountPoint,
 		ContainerSourcePath: containerSourcePath,
 		NumOfWorkers:        numOfWorkers,
+		Logger:              logger,
 	}
 
 	uruk.Start(queueName)

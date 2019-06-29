@@ -4,6 +4,8 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"log"
+	"strings"
 	"time"
 
 	"github.com/step/saurontypes"
@@ -22,6 +24,17 @@ type Uruk struct {
 	SourceMountPoint    string
 	ContainerSourcePath string
 	NumOfWorkers        int
+	Logger              *log.Logger
+}
+
+func (u Uruk) String() string {
+	var builder strings.Builder
+	builder.WriteString(u.QClient.String() + "\n")
+	builder.WriteString(fmt.Sprintf("%v\n", u.DClient))
+	builder.WriteString("Source mounted at: " + u.SourceMountPoint + "\n")
+	builder.WriteString("Copying to container at: " + u.SourceMountPoint + "\n")
+	builder.WriteString("Number of Workers: " + fmt.Sprintf("%d", u.NumOfWorkers))
+	return builder.String()
 }
 
 func (u Uruk) executeJob(urukMessage saurontypes.UrukMessage) (rerr error) {
@@ -50,9 +63,10 @@ func (u Uruk) executeJob(urukMessage saurontypes.UrukMessage) (rerr error) {
 	}
 
 	okCh, errCh := u.DClient.ContainerWait(ctx, resp.ID, container.WaitConditionNotRunning)
+	u.logWaitingForContainer(resp.ID)
 	select {
 	case status := <-okCh:
-		fmt.Println("everything ok. container done", status.StatusCode)
+		u.logContainerSuccessful(resp.ID, status)
 		if err := u.copyFromContainer(resp.ID, "/results/result.json"); err != nil {
 			return CopyFromContainerError{urukMessage, resp.ID, err}
 		}
@@ -78,6 +92,7 @@ func worker(id int, u Uruk, messages <-chan saurontypes.UrukMessage) {
 }
 
 func (u Uruk) Start(qName string) {
+	u.logStart(qName)
 	jobs := make(chan saurontypes.UrukMessage, 10)
 
 	for index := 0; index < u.NumOfWorkers; index++ {
@@ -88,12 +103,11 @@ func (u Uruk) Start(qName string) {
 		var urukMessage saurontypes.UrukMessage
 		msg, err := u.QClient.Dequeue(qName)
 		if err != nil {
-			fmt.Println("Unable to dequeue")
 			continue
 		}
 		err = json.Unmarshal([]byte(msg), &urukMessage)
 		if err != nil {
-			fmt.Println("Unable to unmarshal", msg)
+			u.logError("Unable to unmarshall\n---\n"+msg+"---\n", err)
 		}
 		jobs <- urukMessage
 	}

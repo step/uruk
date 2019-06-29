@@ -18,6 +18,7 @@ func (u Uruk) createContainer(message saurontypes.UrukMessage) (container.Contai
 	name := message.ImageName
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*15)
 	defer cancel()
+	u.logCreateContainer(name)
 	return u.DClient.ContainerCreate(ctx, &container.Config{
 		Image: name,
 		Env:   []string{},
@@ -27,6 +28,7 @@ func (u Uruk) createContainer(message saurontypes.UrukMessage) (container.Contai
 func (u Uruk) copyToContainer(containerId, repoLocation string) error {
 	var buffer bytes.Buffer
 	location := filepath.Join(u.SourceMountPoint, repoLocation)
+	u.logCopyToContainer(containerId, location)
 	if err := tarutils.Tar(location, &buffer, u.Tarable); err != nil {
 		return err
 	}
@@ -56,6 +58,7 @@ func (u Uruk) copyFromContainer(containerId, src string) (rerr error) {
 }
 
 func (u Uruk) startContainer(ctx context.Context, containerId string) error {
+	u.logStartContainer(containerId)
 	return u.DClient.ContainerStart(ctx, containerId, types.ContainerStartOptions{})
 }
 
@@ -68,5 +71,6 @@ func (u Uruk) killContainer(ctx context.Context, containerId string) error {
 }
 
 func (u Uruk) removeContainer(ctx context.Context, containerId string) error {
+	u.logRemoveContainer(containerId)
 	return u.DClient.ContainerRemove(context.Background(), containerId, types.ContainerRemoveOptions{Force: true})
 }
