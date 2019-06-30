@@ -67,14 +67,15 @@ func (u Uruk) executeJob(urukMessage saurontypes.UrukMessage) (rerr error) {
 	select {
 	case status := <-okCh:
 		u.logContainerSuccessful(resp.ID, status)
-		if err := u.copyFromContainer(resp.ID, "/results/result.json"); err != nil {
-			return CopyFromContainerError{urukMessage, resp.ID, err}
+		fileToCopy := "/results/result.json"
+		if err := u.copyFromContainer(resp.ID, fileToCopy); err != nil {
+			return CopyFromContainerError{urukMessage, fileToCopy, resp.ID, err}
 		}
 
 	case err := <-errCh:
 		return err
 	case <-ctx.Done():
-		fmt.Println("timed out...")
+		u.logContainerTookTooLong(resp.ID)
 		return u.killContainer(context.Background(), resp.ID)
 	}
 
@@ -86,7 +87,7 @@ func worker(id int, u Uruk, messages <-chan saurontypes.UrukMessage) {
 	for message := range messages {
 		err := u.executeJob(message)
 		if err != nil {
-			fmt.Println(err.Error())
+			u.logError("Error executing job\n"+message.String(), err)
 		}
 	}
 }

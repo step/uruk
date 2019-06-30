@@ -55,3 +55,18 @@ func (u Uruk) logCopyToContainer(containerId, repoLocation string) {
 	message := fmt.Sprintf("Copying %s to container %s:/", repoLocation, containerId)
 	u.Logger.Println(message)
 }
+
+func (u Uruk) logCopyFromContainer(containerId, src string) {
+	message := fmt.Sprintf("Copying from container %s:%s", containerId, src)
+	u.Logger.Println(message)
+}
+
+func (u Uruk) logContainerTookTooLong(containerId string) {
+	message := fmt.Sprintf("Container %s did not finish execution in allotted time", containerId)
+	u.Logger.Println(message)
+}
+
+func (u Uruk) logKillContainer(containerId string) {
+	message := fmt.Sprintf("Killing container %s", containerId)
+	u.Logger.Println(message)
+}

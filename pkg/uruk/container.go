@@ -39,6 +39,7 @@ func (u Uruk) copyToContainer(containerId, repoLocation string) error {
 }
 
 func (u Uruk) copyFromContainer(containerId, src string) (rerr error) {
+	u.logCopyFromContainer(containerId, src)
 	readCloser, _, err := u.DClient.CopyFromContainer(context.Background(), containerId, src)
 	if err != nil {
 		return err
@@ -63,6 +64,7 @@ func (u Uruk) startContainer(ctx context.Context, containerId string) error {
 }
 
 func (u Uruk) killContainer(ctx context.Context, containerId string) error {
+	u.logKillContainer(containerId)
 	err := u.DClient.ContainerKill(ctx, containerId, "SIGTERM")
 	if err != nil {
 		return err

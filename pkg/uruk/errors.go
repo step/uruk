@@ -50,13 +50,15 @@ func (sce StartContainerError) Error() string {
 
 type CopyFromContainerError struct {
 	UrukMessage saurontypes.UrukMessage
+	src         string
 	ContainerId string
 	err         error
 }
 
 func (cfce CopyFromContainerError) Error() string {
 	msg := cfce.UrukMessage
-	return fmt.Sprintf("Unable to copy resultsresult.json from container of image %s with id %s\n%s",
+	return fmt.Sprintf("Unable to copy %s from container of image %s with id %s\n%s",
+		cfce.src,
 		msg.ImageName,
 		cfce.ContainerId,
 		cfce.err.Error())
