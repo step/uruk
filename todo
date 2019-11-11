@@ -1,0 +1,9 @@
+Add logger
+Use redisclient from Angmar
+Add flags and command line options
+Add multiple workers
+Dockerise
+Parameterise all hardcoded paths and strings
+Handle errors
+Move taring to tarutils
+
