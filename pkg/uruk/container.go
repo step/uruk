@@ -2,17 +2,40 @@ package uruk
 
 import (
 	"bytes"
+	"fmt"
 	"context"
-	"io"
-	"os"
 	"path/filepath"
+	"archive/tar"
 	"time"
+	"io"
 
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/container"
 	"github.com/step/saurontypes"
 	"github.com/step/uruk/pkg/tarutils"
+	"github.com/step/angmar/pkg/testutils"
 )
+
+
+func UntarWithoutGz(reader io.Reader, extractor Extractor) (rerr error) {
+	tarReader := tar.NewReader(reader)
+	// For each header in the tar stream call the appropriate Extractor function
+	for header, err := tarReader.Next(); err != io.EOF; header, err = tarReader.Next() {
+		if err != nil {
+			return TarHeaderError{err, "Untar"}
+		}
+		extract := extractor.ExtractFile
+		if header.FileInfo().IsDir() {
+			extract = extractor.ExtractDir
+		}
+
+		if err := extract(*header, tarReader); err != nil {
+			return ExtractionError{header.Name, header.Mode, err, "Untar"}
+		}
+	}
+
+	return nil
+}
 
 func (u Uruk) createContainer(message saurontypes.UrukMessage) (container.ContainerCreateCreatedBody, error) {
 	name := message.ImageName
@@ -51,9 +74,9 @@ func (u Uruk) copyFromContainer(containerId, src string) (rerr error) {
 		}
 	}()
 
-	if _, err := io.Copy(os.Stdout, readCloser); err != nil {
-		return err
-	}
+	mapFiles := testutils.NewMapFiles();
+	UntarWithoutGz(readCloser, &mapFiles)
+	fmt.Println(mapFiles)
 
 	return nil
 }
