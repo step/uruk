@@ -1,4 +1,6 @@
 #! /bin/bash
 
 mkdir /results
-mocha --recursive --reporter=json > /results/result.json
+mkdir /source/test
+cp -r /data/* /source/test/
+mocha --recursive --reporter=mocha_reporter -O fileName=/results/result.json

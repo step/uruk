@@ -19,17 +19,15 @@ func (cce ContainerCreationError) Error() string {
 }
 
 type CopyToContainerError struct {
-	UrukMessage         saurontypes.UrukMessage
-	SourceMountPoint    string
-	ContainerSourcePath string
-	err                 error
+	UrukMessage saurontypes.UrukMessage
+	Source      string
+	Destination string
+	err         error
 }
 
 func (ctce CopyToContainerError) Error() string {
 	msg := ctce.UrukMessage
-	source := filepath.Join(ctce.SourceMountPoint, msg.RepoLocation)
-	destination := filepath.Join("/", ctce.ContainerSourcePath)
-	return fmt.Sprintf("Unable to copy from %s to %s:%s\n%s", source, msg.ImageName, destination, ctce.err.Error())
+	return fmt.Sprintf("Unable to copy from %s to %s:%s\n%s", ctce.Source, msg.ImageName, ctce.Destination, ctce.err.Error())
 }
 
 type StartContainerError struct {

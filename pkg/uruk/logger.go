@@ -51,8 +51,8 @@ func (u Uruk) logRemoveContainer(containerId string) {
 	u.Logger.Println(message)
 }
 
-func (u Uruk) logCopyToContainer(containerId, repoLocation string) {
-	message := fmt.Sprintf("Copying %s to container %s:/", repoLocation, containerId)
+func (u Uruk) logCopyToContainer(containerId, src, dest string) {
+	message := fmt.Sprintf("Copying %s to container %s:%s", src, containerId, dest)
 	u.Logger.Println(message)
 }
 

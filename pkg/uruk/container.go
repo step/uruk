@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"fmt"
 	"context"
-	"path/filepath"
 	"archive/tar"
 	"time"
 	"io"
@@ -48,15 +47,14 @@ func (u Uruk) createContainer(message saurontypes.UrukMessage) (container.Contai
 	}, nil, nil, "")
 }
 
-func (u Uruk) copyToContainer(containerId, repoLocation string) error {
+func (u Uruk) copyToContainer(containerId, src, dest string) error {
 	var buffer bytes.Buffer
-	location := filepath.Join(u.SourceMountPoint, repoLocation)
-	u.logCopyToContainer(containerId, location)
-	if err := tarutils.Tar(location, &buffer, u.Tarable); err != nil {
+	u.logCopyToContainer(containerId, src, dest)
+	if err := tarutils.Tar(src, &buffer, u.Tarable); err != nil {
 		return err
 	}
 	ctx := context.Background()
-	return u.DClient.CopyToContainer(ctx, containerId, "/", &buffer, types.CopyToContainerOptions{
+	return u.DClient.CopyToContainer(ctx, containerId, dest, &buffer, types.CopyToContainerOptions{
 		AllowOverwriteDirWithFile: true,
 	})
 }

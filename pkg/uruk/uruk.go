@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"path/filepath"
 	"strings"
 	"time"
 
@@ -22,6 +23,7 @@ type Uruk struct {
 	DClient             *client.Client
 	Tarable             tarutils.Tarable
 	SourceMountPoint    string
+	ContainerDataPath   string
 	ContainerSourcePath string
 	NumOfWorkers        int
 	Logger              *log.Logger
@@ -32,7 +34,8 @@ func (u Uruk) String() string {
 	builder.WriteString(u.QClient.String() + "\n")
 	builder.WriteString(fmt.Sprintf("%v\n", u.DClient))
 	builder.WriteString("Source mounted at: " + u.SourceMountPoint + "\n")
-	builder.WriteString("Copying to container at: " + u.SourceMountPoint + "\n")
+	builder.WriteString("Copying source to container at: " + u.ContainerSourcePath + "\n")
+	builder.WriteString("Copying data to container at: " + u.ContainerDataPath + "\n")
 	builder.WriteString("Number of Workers: " + fmt.Sprintf("%d", u.NumOfWorkers))
 	return builder.String()
 }
@@ -49,9 +52,15 @@ func (u Uruk) executeJob(urukMessage saurontypes.UrukMessage) (rerr error) {
 		}
 	}()
 
-	err = u.copyToContainer(resp.ID, urukMessage.RepoLocation)
+	sourceLocation := filepath.Join(u.SourceMountPoint, urukMessage.RepoLocation)
+	err = u.copyToContainer(resp.ID, sourceLocation, u.ContainerSourcePath)
 	if err != nil {
-		return CopyToContainerError{urukMessage, u.SourceMountPoint, u.ContainerSourcePath, err}
+		return CopyToContainerError{urukMessage, sourceLocation, u.ContainerSourcePath, err}
+	}
+
+	err = u.copyToContainer(resp.ID, urukMessage.DataPath, u.ContainerDataPath)
+	if err != nil {
+		return CopyToContainerError{urukMessage, urukMessage.DataPath, u.ContainerDataPath, err}
 	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
