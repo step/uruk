@@ -31,42 +31,42 @@ func (u Uruk) logCreateContainer(imageName string) {
 	u.Logger.Println(message)
 }
 
-func (u Uruk) logStartContainer(containerId string) {
-	message := fmt.Sprintf("Starting container %s", containerId)
+func (u Uruk) logStartContainer(containerID string) {
+	message := fmt.Sprintf("Starting container %s", containerID)
 	u.Logger.Println(message)
 }
 
-func (u Uruk) logContainerSuccessful(containerId string, status container.ContainerWaitOKBody) {
-	message := fmt.Sprintf("Container %s ran successfully\n---\nStatus Code: %d\nErrors: %s\n---", containerId, status.StatusCode, status.Error)
+func (u Uruk) logContainerSuccessful(containerID string, status container.ContainerWaitOKBody) {
+	message := fmt.Sprintf("Container %s ran successfully\n---\nStatus Code: %d\nErrors: %s\n---", containerID, status.StatusCode, status.Error)
 	u.Logger.Println(message)
 }
 
-func (u Uruk) logWaitingForContainer(containerId string) {
-	message := fmt.Sprintf("Waiting for container %s", containerId)
+func (u Uruk) logWaitingForContainer(containerID string) {
+	message := fmt.Sprintf("Waiting for container %s", containerID)
 	u.Logger.Println(message)
 }
 
-func (u Uruk) logRemoveContainer(containerId string) {
-	message := fmt.Sprintf("Removing container %s", containerId)
+func (u Uruk) logRemoveContainer(containerID string) {
+	message := fmt.Sprintf("Removing container %s", containerID)
 	u.Logger.Println(message)
 }
 
-func (u Uruk) logCopyToContainer(containerId, repoLocation string) {
-	message := fmt.Sprintf("Copying %s to container %s:/", repoLocation, containerId)
+func (u Uruk) logCopyToContainer(containerID, src, dest string) {
+	message := fmt.Sprintf("Copying %s to container %s:%s", src, containerID, dest)
 	u.Logger.Println(message)
 }
 
-func (u Uruk) logCopyFromContainer(containerId, src string) {
-	message := fmt.Sprintf("Copying from container %s:%s", containerId, src)
+func (u Uruk) logCopyFromContainer(containerID, src string) {
+	message := fmt.Sprintf("Copying from container %s:%s", containerID, src)
 	u.Logger.Println(message)
 }
 
-func (u Uruk) logContainerTookTooLong(containerId string) {
-	message := fmt.Sprintf("Container %s did not finish execution in allotted time", containerId)
+func (u Uruk) logContainerTookTooLong(containerID string) {
+	message := fmt.Sprintf("Container %s did not finish execution in allotted time", containerID)
 	u.Logger.Println(message)
 }
 
-func (u Uruk) logKillContainer(containerId string) {
-	message := fmt.Sprintf("Killing container %s", containerId)
+func (u Uruk) logKillContainer(containerID string) {
+	message := fmt.Sprintf("Killing container %s", containerID)
 	u.Logger.Println(message)
 }

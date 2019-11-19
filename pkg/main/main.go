@@ -14,15 +14,17 @@ func main() {
 	flag.Parse()
 	dClient := getDockerClient()
 	qClient := getRedisClient()
-	tarable := tarutils.NewDefaultTarable(containerSourcePath)
+	tarable := tarutils.NewDefaultTarable("")
 
 	logger := log.New(os.Stdout, "uruk ", log.LstdFlags)
 	uruk := u.Uruk{
 		QClient:             qClient,
 		DClient:             dClient,
+		SClient:             qClient,
 		Tarable:             tarable,
 		SourceMountPoint:    sourceMountPoint,
 		ContainerSourcePath: containerSourcePath,
+		ContainerDataPath:   containerDataPath,
 		NumOfWorkers:        numOfWorkers,
 		Logger:              logger,
 	}
