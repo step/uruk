@@ -16,16 +16,18 @@ import (
 	"github.com/docker/docker/client"
 
 	q "github.com/step/angmar/pkg/queueclient"
+	s "github.com/step/uruk/pkg/streamClient"
 )
 
 // Uruk is service which takes a UrukMessage and
-// parses it to get the details of job and launches a 
+// parses it to get the details of job and launches a
 // container with the image specified for the job.
 // It copies the source and data to the container and
-// after container process is done running it copies the 
+// after container process is done running it copies the
 // artifacts from the container and kills the container
 type Uruk struct {
 	QClient             q.QueueClient
+	SClient             s.StreamClient
 	DClient             *client.Client
 	Tarable             tarutils.Tarable
 	SourceMountPoint    string
@@ -108,7 +110,7 @@ func worker(id int, u Uruk, messages <-chan saurontypes.UrukMessage) {
 }
 
 // Start method should be called to start of uruk
-// it takes queue name as parameter to determine which 
+// it takes queue name as parameter to determine which
 // queue to listen to
 func (u Uruk) Start(qName string) {
 	u.logStart(qName)

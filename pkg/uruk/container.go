@@ -1,18 +1,17 @@
 package uruk
 
 import (
-	"bytes"
-	"fmt"
-	"context"
 	"archive/tar"
-	"time"
+	"bytes"
+	"context"
 	"io"
+	"time"
 
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/container"
+	"github.com/step/angmar/pkg/testutils"
 	"github.com/step/saurontypes"
 	"github.com/step/uruk/pkg/tarutils"
-	"github.com/step/angmar/pkg/testutils"
 )
 
 func UntarWithoutGz(reader io.Reader, extractor Extractor) (rerr error) {
@@ -71,9 +70,9 @@ func (u Uruk) copyFromContainer(containerID, src string) (rerr error) {
 		}
 	}()
 
-	mapFiles := testutils.NewMapFiles();
+	mapFiles := testutils.NewMapFiles()
 	UntarWithoutGz(readCloser, &mapFiles)
-	fmt.Println(mapFiles)
+	u.SClient.Add("eventHub", "details", mapFiles.String())
 
 	return nil
 }

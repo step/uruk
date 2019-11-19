@@ -20,6 +20,7 @@ func main() {
 	uruk := u.Uruk{
 		QClient:             qClient,
 		DClient:             dClient,
+		SClient:             qClient,
 		Tarable:             tarable,
 		SourceMountPoint:    sourceMountPoint,
 		ContainerSourcePath: containerSourcePath,
