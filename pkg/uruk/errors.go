@@ -2,12 +2,13 @@ package uruk
 
 import (
 	"fmt"
-	"path/filepath"
 
 	"github.com/docker/docker/api/types/container"
 	"github.com/step/saurontypes"
 )
 
+// ContainerCreationError is a custom error to 
+// format and log the error during creating a container
 type ContainerCreationError struct {
 	UrukMessage saurontypes.UrukMessage
 	err         error
@@ -18,6 +19,8 @@ func (cce ContainerCreationError) Error() string {
 	return fmt.Sprintf("Unable to create container %s for %s\n%s", msg.ImageName, msg.RepoLocation, cce.err.Error())
 }
 
+// CopyToContainerError is a custom error to
+// format and log the error happened during copying to container
 type CopyToContainerError struct {
 	UrukMessage saurontypes.UrukMessage
 	Source      string
@@ -30,6 +33,8 @@ func (ctce CopyToContainerError) Error() string {
 	return fmt.Sprintf("Unable to copy from %s to %s:%s\n%s", ctce.Source, msg.ImageName, ctce.Destination, ctce.err.Error())
 }
 
+// StartContainerError is a custom error to format
+// and log the error happened during starting a container
 type StartContainerError struct {
 	Response    container.ContainerCreateCreatedBody
 	UrukMessage saurontypes.UrukMessage
@@ -46,10 +51,12 @@ func (sce StartContainerError) Error() string {
 		sce.err.Error())
 }
 
+// CopyFromContainerError is a custom error to format
+// and log the error happened during copying from container
 type CopyFromContainerError struct {
 	UrukMessage saurontypes.UrukMessage
 	src         string
-	ContainerId string
+	ContainerID string
 	err         error
 }
 
@@ -58,7 +65,7 @@ func (cfce CopyFromContainerError) Error() string {
 	return fmt.Sprintf("Unable to copy %s from container of image %s with id %s\n%s",
 		cfce.src,
 		msg.ImageName,
-		cfce.ContainerId,
+		cfce.ContainerID,
 		cfce.err.Error())
 }
 

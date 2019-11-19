@@ -18,6 +18,12 @@ import (
 	q "github.com/step/angmar/pkg/queueclient"
 )
 
+// Uruk is service which takes a UrukMessage and
+// parses it to get the details of job and launches a 
+// container with the image specified for the job.
+// It copies the source and data to the container and
+// after container process is done running it copies the 
+// artifacts from the container and kills the container
 type Uruk struct {
 	QClient             q.QueueClient
 	DClient             *client.Client
@@ -101,6 +107,9 @@ func worker(id int, u Uruk, messages <-chan saurontypes.UrukMessage) {
 	}
 }
 
+// Start method should be called to start of uruk
+// it takes queue name as parameter to determine which 
+// queue to listen to
 func (u Uruk) Start(qName string) {
 	u.logStart(qName)
 	jobs := make(chan saurontypes.UrukMessage, 10)

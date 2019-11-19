@@ -39,7 +39,7 @@ func stripLeadingComponent(path string) string {
 	return filepath.Join(pathComponents[1:]...)
 }
 
-// DefaultExtractor.ExtractFile extracts the given file under src specified
+// ExtractFile extracts the given file under src specified
 // in DefaultExtractor
 func (extractor DefaultExtractor) ExtractFile(header tar.Header, reader io.Reader) (rerr error) {
 	// Open file and defer file.Close()
@@ -77,7 +77,7 @@ func (extractor DefaultExtractor) ExtractFile(header tar.Header, reader io.Reade
 	return nil
 }
 
-// DefaultExtractor.ExtractDir extracts the given dir under src specified
+// ExtractDir extracts the given dir under src specified
 // in DefaultExtractor
 func (extractor DefaultExtractor) ExtractDir(header tar.Header, reader io.Reader) error {
 	// Create directory in src
@@ -91,6 +91,7 @@ func (extractor DefaultExtractor) ExtractDir(header tar.Header, reader io.Reader
 	return nil
 }
 
+// GetBasePath is a method to get the base path from DefaultExtractor
 func (extractor DefaultExtractor) GetBasePath() string {
 	return extractor.src
 }
@@ -104,10 +105,14 @@ func NewDefaultExtractor(src string) Extractor {
 	return DefaultExtractor{src}
 }
 
+// DefaultExtractorGenerator is a simple implementation
+// of ExtractorGenerator
 type DefaultExtractorGenerator struct {
 	Src string
 }
 
+// Generate is a method on DefaultExtractorGenerator
+// to conveniently generate a new DefaultExtractorGenerator
 func (d DefaultExtractorGenerator) Generate(args ...string) Extractor {
 	relativePath := filepath.Join(args...)
 	dir := filepath.Join(d.Src, relativePath)

@@ -15,7 +15,6 @@ import (
 	"github.com/step/angmar/pkg/testutils"
 )
 
-
 func UntarWithoutGz(reader io.Reader, extractor Extractor) (rerr error) {
 	tarReader := tar.NewReader(reader)
 	// For each header in the tar stream call the appropriate Extractor function
@@ -47,21 +46,21 @@ func (u Uruk) createContainer(message saurontypes.UrukMessage) (container.Contai
 	}, nil, nil, "")
 }
 
-func (u Uruk) copyToContainer(containerId, src, dest string) error {
+func (u Uruk) copyToContainer(containerID, src, dest string) error {
 	var buffer bytes.Buffer
-	u.logCopyToContainer(containerId, src, dest)
+	u.logCopyToContainer(containerID, src, dest)
 	if err := tarutils.Tar(src, &buffer, u.Tarable); err != nil {
 		return err
 	}
 	ctx := context.Background()
-	return u.DClient.CopyToContainer(ctx, containerId, dest, &buffer, types.CopyToContainerOptions{
+	return u.DClient.CopyToContainer(ctx, containerID, dest, &buffer, types.CopyToContainerOptions{
 		AllowOverwriteDirWithFile: true,
 	})
 }
 
-func (u Uruk) copyFromContainer(containerId, src string) (rerr error) {
-	u.logCopyFromContainer(containerId, src)
-	readCloser, _, err := u.DClient.CopyFromContainer(context.Background(), containerId, src)
+func (u Uruk) copyFromContainer(containerID, src string) (rerr error) {
+	u.logCopyFromContainer(containerID, src)
+	readCloser, _, err := u.DClient.CopyFromContainer(context.Background(), containerID, src)
 	if err != nil {
 		return err
 	}
@@ -79,21 +78,22 @@ func (u Uruk) copyFromContainer(containerId, src string) (rerr error) {
 	return nil
 }
 
-func (u Uruk) startContainer(ctx context.Context, containerId string) error {
-	u.logStartContainer(containerId)
-	return u.DClient.ContainerStart(ctx, containerId, types.ContainerStartOptions{})
+func (u Uruk) startContainer(ctx context.Context, containerID string) error {
+	u.logStartContainer(containerID)
+	return u.DClient.ContainerStart(ctx, containerID, types.ContainerStartOptions{})
 }
 
-func (u Uruk) killContainer(ctx context.Context, containerId string) error {
-	u.logKillContainer(containerId)
-	err := u.DClient.ContainerKill(ctx, containerId, "SIGTERM")
+func (u Uruk) killContainer(ctx context.Context, containerID string) error {
+	u.logKillContainer(containerID)
+	err := u.DClient.ContainerKill(ctx, containerID, "SIGTERM")
 	if err != nil {
 		return err
 	}
+	u.DClient.ContainerRemove(ctx, containerID, types.ContainerRemoveOptions{})
 	return nil
 }
 
-func (u Uruk) removeContainer(ctx context.Context, containerId string) error {
-	u.logRemoveContainer(containerId)
-	return u.DClient.ContainerRemove(context.Background(), containerId, types.ContainerRemoveOptions{Force: true})
+func (u Uruk) removeContainer(ctx context.Context, containerID string) error {
+	u.logRemoveContainer(containerID)
+	return u.DClient.ContainerRemove(context.Background(), containerID, types.ContainerRemoveOptions{Force: true})
 }
