@@ -72,7 +72,6 @@ func (u Uruk) copyFromContainer(containerID, src string) (rerr error) {
 
 	mapFiles := testutils.NewMapFiles()
 	UntarWithoutGz(readCloser, &mapFiles)
-	u.SClient.Add("eventHub", "details", mapFiles.String())
 
 	return nil
 }

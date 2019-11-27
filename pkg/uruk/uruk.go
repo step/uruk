@@ -102,6 +102,16 @@ func (u Uruk) executeJob(urukMessage saurontypes.UrukMessage) (rerr error) {
 
 func worker(id int, u Uruk, messages <-chan saurontypes.UrukMessage) {
 	for message := range messages {
+		startEvent := saurontypes.Event{
+			Source: "uruk",
+			Type: "start uruk",
+			FlowID: message.FlowID,
+			EventID: 1,
+			Timestamp: time.Now().String(),
+			PusherID: "luciferankon",
+		}
+
+		u.SClient.Add("eventHub", startEvent.ConvertToEntry())
 		err := u.executeJob(message)
 		if err != nil {
 			u.logError("Error executing job\n"+message.String(), err)

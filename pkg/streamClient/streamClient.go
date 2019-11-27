@@ -1,6 +1,10 @@
 package streamClient
 
+import (
+	"github.com/step/saurontypes"
+)
+
 type StreamClient interface {
-	Add(sName, key, value string) error
+	Add(sName string, entries []saurontypes.Entry) error
 	Read() error
 }

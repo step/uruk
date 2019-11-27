@@ -37,6 +37,8 @@ github.com/golang/protobuf v1.3.2/go.mod h1:6lQm79b+lXiMfvg/cZm0SGofjICqVBUtrP5y
 github.com/google/go-cmp v0.2.0/go.mod h1:oXzfMopK8JAjlY9xF4vHSVASa0yLyX7SntLO5aqRK0M=
 github.com/google/go-cmp v0.3.1 h1:Xye71clBPdm5HgqGwUkwhbynsUJZhDbS20FvLhQ2izg=
 github.com/google/go-cmp v0.3.1/go.mod h1:8QqcDgzrUqlUb/G2PQTWiueGozuR1884gddMywk6iLU=
+github.com/google/uuid v1.1.1 h1:Gkbcsh/GbpXz7lPftLA3P6TYMwjCLYm83jiFQZF/3gY=
+github.com/google/uuid v1.1.1/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
 github.com/gorilla/mux v1.7.3 h1:gnP5JzjVOuiZD07fKKToCAOjS0yOpj/qPETTXCCS6hw=
 github.com/gorilla/mux v1.7.3/go.mod h1:1lud6UwP+6orDFRuTfBEV8e9/aOM/c4fVVCaMa2zaAs=
 github.com/hpcloud/tail v1.0.0 h1:nfCOvKYfkgYP8hkirhJocXT2+zOD8yUNjXaWfTlyFKI=
@@ -63,12 +65,11 @@ github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZN
 github.com/prometheus/client_model v0.0.0-20190812154241-14fe0d1b01d4/go.mod h1:xMI15A0UPsDsEKsMN9yxemIoYk6Tm2C1GtYGdfGttqA=
 github.com/sirupsen/logrus v1.4.1 h1:GL2rEmy6nsikmW0r8opw9JIRScdMF5hA8cOYLH7In1k=
 github.com/sirupsen/logrus v1.4.1/go.mod h1:ni0Sbl8bgC9z8RoU9G6nDWqqs/fq4eDPysMBDgk/93Q=
-github.com/step/angmar v0.0.0-20191119183610-08e9b40c5892 h1:WoPZP3LP73ux+ASWuhxL9U5mERNOV3bKnhb9HKfdJQM=
-github.com/step/angmar v0.0.0-20191119183610-08e9b40c5892/go.mod h1:SOKrzRj+uwFFXs1MQvvBeJxQkXdcCJ7nBDcg9YTSDhE=
 github.com/step/angmar v0.0.0-20191120174811-0f3d83ff832f h1:B1SI2RhO5Bcn/0MK8+pyVDh379rIBK9MF2+jhZgtXfg=
 github.com/step/angmar v0.0.0-20191120174811-0f3d83ff832f/go.mod h1:SOKrzRj+uwFFXs1MQvvBeJxQkXdcCJ7nBDcg9YTSDhE=
-github.com/step/saurontypes v0.0.0-20191120173813-320873fd7df0 h1:XcbRkScMad/ZcpKMFSBxo0KvPNvKgZ1V0wgBk4PvlM4=
-github.com/step/saurontypes v0.0.0-20191120173813-320873fd7df0/go.mod h1:cnRju5jQlmOznLmd6w5/c72VyWUu3U77nTnsAqi9E80=
+github.com/step/saurontypes v0.0.0-20191122060554-e882d472f5d5 h1:wlXrzDH6+4iyYmI5+GOxRnqX1mkoRXs7sxbKD+29wDc=
+github.com/step/saurontypes v0.0.0-20191122060554-e882d472f5d5/go.mod h1:e6JKuJKVmA8EQXA//HbOobgDIl+/brqoaX363FzwUEo=
+github.com/step/uruk v0.0.0-20191120175724-3cff83f88e1b/go.mod h1:50ZonhII2bkKM85MCCAHKsI7TmxPMR2GoFrBAMHFQFw=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
 github.com/stretchr/objx v0.1.1/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
 github.com/stretchr/testify v1.2.2/go.mod h1:a8OnRcib4nhh0OaRAV+Yts87kKdq0PP7pXfy6kDkUVs=

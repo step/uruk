@@ -1,24 +1,22 @@
 package streamClient
 
+import (
+	"github.com/step/saurontypes"
+)
+
 type DefaultStreamClient struct {
-	Stream []Entry
+	Stream *[]saurontypes.Entry
 }
 
-type Entry struct {
-	Key   string
-	Value string
-}
-
-func (d *DefaultStreamClient) Add(sClient, key, value string) error {
-	elem := Entry{key, value}
-	d.Stream = append(d.Stream, elem)
+func (d DefaultStreamClient) Add(sClient string, entries []saurontypes.Entry) error {
+	*d.Stream = append(*d.Stream, entries...)
 	return nil
 }
 
-func (d *DefaultStreamClient) Read() error {
+func (d DefaultStreamClient) Read() error {
 	return nil
 }
 
 func NewDefaultClient() DefaultStreamClient {
-	return DefaultStreamClient{[]Entry{}}
+	return DefaultStreamClient{&[]saurontypes.Entry{}}
 }

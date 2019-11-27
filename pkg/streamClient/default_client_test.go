@@ -1,6 +1,7 @@
 package streamClient_test
 
 import (
+	"github.com/step/saurontypes"
 	"reflect"
 	"testing"
 	
@@ -9,16 +10,23 @@ import (
 
 func TestAdd(t *testing.T)  {
 	client := s.NewDefaultClient()
+	entry := saurontypes.Entry{
+		Key: "foo",
+		Value: "bar",
+	}
+	entries := make([]saurontypes.Entry,1)
+	entries[0] = entry
 
-	err := client.Add("","foo","bar")
+	err := client.Add("", entries)
 
 	if err != nil {
 		t.Errorf("Error happened while adding to stream \n%s", err)
 	}
 
 	actual := client.Stream
-	expected := s.DefaultStreamClient{[]s.Entry{{
-		"foo", "bar",
+	expected := s.DefaultStreamClient{&[]saurontypes.Entry{{
+		Key: "foo",
+		Value: "bar",
 	}}}.Stream
 
 	if !reflect.DeepEqual(actual, expected) {
