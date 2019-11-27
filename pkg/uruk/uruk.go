@@ -111,7 +111,7 @@ func worker(id int, u Uruk, messages <-chan saurontypes.UrukMessage) {
 			PusherID: "luciferankon",
 		}
 
-		u.SClient.Add("eventHub", startEvent.ConvertToEntry())
+		u.SClient.Add(message.Stream, startEvent.ConvertToEntry())
 		err := u.executeJob(message)
 		if err != nil {
 			u.logError("Error executing job\n"+message.String(), err)

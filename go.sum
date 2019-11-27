@@ -67,9 +67,15 @@ github.com/sirupsen/logrus v1.4.1 h1:GL2rEmy6nsikmW0r8opw9JIRScdMF5hA8cOYLH7In1k
 github.com/sirupsen/logrus v1.4.1/go.mod h1:ni0Sbl8bgC9z8RoU9G6nDWqqs/fq4eDPysMBDgk/93Q=
 github.com/step/angmar v0.0.0-20191120174811-0f3d83ff832f h1:B1SI2RhO5Bcn/0MK8+pyVDh379rIBK9MF2+jhZgtXfg=
 github.com/step/angmar v0.0.0-20191120174811-0f3d83ff832f/go.mod h1:SOKrzRj+uwFFXs1MQvvBeJxQkXdcCJ7nBDcg9YTSDhE=
+github.com/step/angmar v0.0.0-20191127095208-be1628f1e495 h1:9gqbiMqCZukIMButimzXnMBOTiWa19OifmLG6uBT1HQ=
+github.com/step/angmar v0.0.0-20191127095208-be1628f1e495/go.mod h1:4LPjMZg2HkeLVnyBONoM7K7155sZGWPSC0P8KT/BSsQ=
+github.com/step/saurontypes v0.0.0-20191120173813-320873fd7df0/go.mod h1:cnRju5jQlmOznLmd6w5/c72VyWUu3U77nTnsAqi9E80=
 github.com/step/saurontypes v0.0.0-20191122060554-e882d472f5d5 h1:wlXrzDH6+4iyYmI5+GOxRnqX1mkoRXs7sxbKD+29wDc=
 github.com/step/saurontypes v0.0.0-20191122060554-e882d472f5d5/go.mod h1:e6JKuJKVmA8EQXA//HbOobgDIl+/brqoaX363FzwUEo=
+github.com/step/saurontypes v0.0.0-20191127094913-fbe832ecf56f h1:OGcu8QYGTlPCyDfB6cO+B6x7nJbkNsLKpBV9izv7cXM=
+github.com/step/saurontypes v0.0.0-20191127094913-fbe832ecf56f/go.mod h1:Mp1tCyd5L2wC/QoBiqa3stAn7h8Q17gDyZ1jmj9MyXg=
 github.com/step/uruk v0.0.0-20191120175724-3cff83f88e1b/go.mod h1:50ZonhII2bkKM85MCCAHKsI7TmxPMR2GoFrBAMHFQFw=
+github.com/step/uruk v0.0.0-20191127095430-9a65d97ffd22/go.mod h1:Gv3Qfl5lOUYImW/WP6txnRiLjxaKiFwt6iupGHhwrF0=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
 github.com/stretchr/objx v0.1.1/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
 github.com/stretchr/testify v1.2.2/go.mod h1:a8OnRcib4nhh0OaRAV+Yts87kKdq0PP7pXfy6kDkUVs=
