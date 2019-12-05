@@ -85,9 +85,12 @@ func (u Uruk) executeJob(urukMessage saurontypes.UrukMessage) (rerr error) {
 	case status := <-okCh:
 		u.logContainerSuccessful(resp.ID, status)
 		fileToCopy := "/results/result.json"
-		if err := u.copyFromContainer(resp.ID, fileToCopy); err != nil {
+		err, content := u.copyFromContainer(resp.ID, fileToCopy)
+		if err != nil {
 			return CopyFromContainerError{urukMessage, fileToCopy, resp.ID, err}
 		}
+
+		u.publishEvent(urukMessage, "job_complete", content)
 
 	case err := <-errCh:
 		return err
@@ -100,18 +103,21 @@ func (u Uruk) executeJob(urukMessage saurontypes.UrukMessage) (rerr error) {
 	return nil
 }
 
+func (u Uruk) publishEvent(message saurontypes.UrukMessage, eventType, details string) {
+	event := saurontypes.Event{
+		Source:    "uruk",
+		Type:      eventType,
+		FlowID:    message.FlowID,
+		Timestamp: time.Now().String(),
+		PusherID:  message.Pusher,
+		Project:   message.Project,
+		Details:   details,
+	}
+	u.SClient.Add(message.Stream, event.ConvertToEntry())
+}
+
 func worker(id int, u Uruk, messages <-chan saurontypes.UrukMessage) {
 	for message := range messages {
-		startEvent := saurontypes.Event{
-			Source: "uruk",
-			Type: "start uruk",
-			FlowID: message.FlowID,
-			EventID: 1,
-			Timestamp: time.Now().String(),
-			PusherID: "luciferankon",
-		}
-
-		u.SClient.Add(message.Stream, startEvent.ConvertToEntry())
 		err := u.executeJob(message)
 		if err != nil {
 			u.logError("Error executing job\n"+message.String(), err)

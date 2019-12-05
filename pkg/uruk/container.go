@@ -57,11 +57,11 @@ func (u Uruk) copyToContainer(containerID, src, dest string) error {
 	})
 }
 
-func (u Uruk) copyFromContainer(containerID, src string) (rerr error) {
+func (u Uruk) copyFromContainer(containerID, src string) (rerr error, content string) {
 	u.logCopyFromContainer(containerID, src)
 	readCloser, _, err := u.DClient.CopyFromContainer(context.Background(), containerID, src)
 	if err != nil {
-		return err
+		return err, ""
 	}
 
 	defer func() {
@@ -73,7 +73,7 @@ func (u Uruk) copyFromContainer(containerID, src string) (rerr error) {
 	mapFiles := testutils.NewMapFiles()
 	UntarWithoutGz(readCloser, &mapFiles)
 
-	return nil
+	return nil, mapFiles.String()
 }
 
 func (u Uruk) startContainer(ctx context.Context, containerID string) error {
