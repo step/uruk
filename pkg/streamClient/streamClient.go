@@ -6,5 +6,5 @@ import (
 
 type StreamClient interface {
 	Add(sName string, entries []saurontypes.Entry) error
-	Read() error
+	Read(streams []string) []saurontypes.StreamEvent
 }

@@ -1,6 +1,7 @@
 package uruk
 
 import (
+	"encoding/json"
 	"archive/tar"
 	"bytes"
 	"context"
@@ -72,8 +73,9 @@ func (u Uruk) copyFromContainer(containerID, src string) (rerr error, content st
 
 	mapFiles := testutils.NewMapFiles()
 	UntarWithoutGz(readCloser, &mapFiles)
+	contentBytes, _ := json.Marshal(mapFiles.Files)
 
-	return nil, mapFiles.String()
+	return nil, string(contentBytes)
 }
 
 func (u Uruk) startContainer(ctx context.Context, containerID string) error {

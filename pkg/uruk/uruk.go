@@ -90,7 +90,19 @@ func (u Uruk) executeJob(urukMessage saurontypes.UrukMessage) (rerr error) {
 			return CopyFromContainerError{urukMessage, fileToCopy, resp.ID, err}
 		}
 
-		u.publishEvent(urukMessage, "job_complete", content)
+		details := make(map[string]string)
+
+		details["job"] = urukMessage.Job
+		details["result"] = content
+
+		marshalledDetails, err := json.Marshal(details)   
+    if err != nil {
+        fmt.Println(err.Error())
+        return
+    }
+     
+    jsonStr := string(marshalledDetails)
+		u.publishEvent(urukMessage, "job_complete", jsonStr)
 
 	case err := <-errCh:
 		return err
