@@ -71,7 +71,7 @@ func (u Uruk) executeJob(urukMessage saurontypes.UrukMessage) (rerr error) {
 		return CopyToContainerError{urukMessage, urukMessage.DataPath, u.ContainerDataPath, err}
 	}
 
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*30)
 	defer cancel()
 
 	err = u.startContainer(ctx, resp.ID)
