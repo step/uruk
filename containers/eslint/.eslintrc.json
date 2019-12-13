@@ -1,0 +1,40 @@
+{
+  "parserOptions": {
+    "ecmaVersion": 6,
+    "sourceType": "module",
+    "ecmaFeatures": {
+      "jsx": true
+    }
+  },
+  "rules": {
+    "semi": "error",
+    "camelcase" :"error",
+    "class-methods-use-this":"warn",
+    "array-bracket-spacing":"error",
+    "arrow-spacing":"error",
+    "block-scoped-var":"error",
+    "curly":"error",
+    "eol-last":"warn",
+    "eqeqeq":"warn",
+    "for-direction":"error",
+    "getter-return":"error",
+    "global-require":"error",
+    "handle-callback-err":"error",
+    "id-length":"error",
+    "indent":"error",
+    "key-spacing":"error",
+    "max-len":"error",
+    "max-params":"error",
+    "max-statements":"error",
+    "no-console":"warn",
+    "no-else-return":"error",
+    "no-eval":"error",
+    "no-extra-semi":"error",
+    "no-implicit-globals":"error",
+    "no-irregular-whitespace":"warn",
+    "no-magic-numbers":"warn",
+    "no-process-exit":"error",
+    "no-return-assign":"error",
+    "no-useless-return":"error"
+  }
+}
