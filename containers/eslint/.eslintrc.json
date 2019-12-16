@@ -20,7 +20,6 @@
     "getter-return":"error",
     "global-require":"error",
     "handle-callback-err":"error",
-    "id-length":"error",
     "indent":"error",
     "key-spacing":"error",
     "max-len":"error",

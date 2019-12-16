@@ -95,13 +95,13 @@ func (u Uruk) executeJob(urukMessage saurontypes.UrukMessage) (rerr error) {
 		details["job"] = urukMessage.Job
 		details["result"] = content
 
-		marshalledDetails, err := json.Marshal(details)   
-    if err != nil {
-        fmt.Println(err.Error())
-        return
-    }
-     
-    jsonStr := string(marshalledDetails)
+		marshalledDetails, err := json.Marshal(details)
+		if err != nil {
+			fmt.Println(err.Error())
+			return
+		}
+
+		jsonStr := string(marshalledDetails)
 		u.publishEvent(urukMessage, "job_complete", jsonStr)
 
 	case err := <-errCh:
@@ -120,10 +120,11 @@ func (u Uruk) publishEvent(message saurontypes.UrukMessage, eventType, details s
 		Source:    "uruk",
 		Type:      eventType,
 		FlowID:    message.FlowID,
-		Timestamp: time.Now().String(),
+		Timestamp: time.Now().Format("2 Jan 2006 15:04:05"),
 		PusherID:  message.Pusher,
 		Project:   message.Project,
 		Details:   details,
+		SHA:       message.SHA,
 	}
 	u.SClient.Add(message.Stream, event.ConvertToEntry())
 }
