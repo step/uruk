@@ -2,9 +2,6 @@ package main
 
 import (
 	"flag"
-	"log"
-	"os"
-
 	"github.com/step/uruk/pkg/tarutils"
 
 	u "github.com/step/uruk/pkg/uruk"
@@ -16,7 +13,9 @@ func main() {
 	qClient := getRedisClient()
 	tarable := tarutils.NewDefaultTarable("")
 
-	logger := log.New(os.Stdout, "uruk ", log.LstdFlags)
+	file := getLogfile()
+
+	logger := getLogger(file)
 	uruk := u.Uruk{
 		QClient:             qClient,
 		DClient:             dClient,

@@ -39,7 +39,7 @@ func (u Uruk) createContainer(message saurontypes.UrukMessage) (container.Contai
 	name := message.ImageName
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*15)
 	defer cancel()
-	u.logCreateContainer(name)
+	u.Logger.logCreateContainer(name)
 	return u.DClient.ContainerCreate(ctx, &container.Config{
 		Image: name,
 		Env:   []string{},
@@ -48,7 +48,7 @@ func (u Uruk) createContainer(message saurontypes.UrukMessage) (container.Contai
 
 func (u Uruk) copyToContainer(containerID, src, dest string) error {
 	var buffer bytes.Buffer
-	u.logCopyToContainer(containerID, src, dest)
+	u.Logger.logCopyToContainer(containerID, src, dest)
 	if err := tarutils.Tar(src, &buffer, u.Tarable); err != nil {
 		return err
 	}
@@ -59,7 +59,7 @@ func (u Uruk) copyToContainer(containerID, src, dest string) error {
 }
 
 func (u Uruk) copyFromContainer(containerID, src string) (rerr error, content string) {
-	u.logCopyFromContainer(containerID, src)
+	u.Logger.logCopyFromContainer(containerID, src)
 	readCloser, _, err := u.DClient.CopyFromContainer(context.Background(), containerID, src)
 	if err != nil {
 		return err, ""
@@ -79,12 +79,12 @@ func (u Uruk) copyFromContainer(containerID, src string) (rerr error, content st
 }
 
 func (u Uruk) startContainer(ctx context.Context, containerID string) error {
-	u.logStartContainer(containerID)
+	u.Logger.logStartContainer(containerID)
 	return u.DClient.ContainerStart(ctx, containerID, types.ContainerStartOptions{})
 }
 
 func (u Uruk) killContainer(ctx context.Context, containerID string) error {
-	u.logKillContainer(containerID)
+	u.Logger.logKillContainer(containerID)
 	err := u.DClient.ContainerKill(ctx, containerID, "SIGTERM")
 	if err != nil {
 		return err
@@ -94,6 +94,6 @@ func (u Uruk) killContainer(ctx context.Context, containerID string) error {
 }
 
 func (u Uruk) removeContainer(ctx context.Context, containerID string) error {
-	u.logRemoveContainer(containerID)
+	u.Logger.logRemoveContainer(containerID)
 	return u.DClient.ContainerRemove(context.Background(), containerID, types.ContainerRemoveOptions{Force: true})
 }

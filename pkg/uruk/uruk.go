@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"log"
 	"path/filepath"
 	"strings"
 	"time"
@@ -34,7 +33,7 @@ type Uruk struct {
 	ContainerDataPath   string
 	ContainerSourcePath string
 	NumOfWorkers        int
-	Logger              *log.Logger
+	Logger              UrukLogger
 }
 
 func (u Uruk) String() string {
@@ -80,10 +79,10 @@ func (u Uruk) executeJob(urukMessage saurontypes.UrukMessage) (rerr error) {
 	}
 
 	okCh, errCh := u.DClient.ContainerWait(ctx, resp.ID, container.WaitConditionNotRunning)
-	u.logWaitingForContainer(resp.ID)
+	u.Logger.logWaitingForContainer(resp.ID)
 	select {
 	case status := <-okCh:
-		u.logContainerSuccessful(resp.ID, status)
+		u.Logger.logContainerSuccessful(resp.ID, status)
 		fileToCopy := "/results/result.json"
 		err, content := u.copyFromContainer(resp.ID, fileToCopy)
 		if err != nil {
@@ -107,7 +106,7 @@ func (u Uruk) executeJob(urukMessage saurontypes.UrukMessage) (rerr error) {
 	case err := <-errCh:
 		return err
 	case <-ctx.Done():
-		u.logContainerTookTooLong(resp.ID)
+		u.Logger.logContainerTookTooLong(resp.ID)
 		return u.killContainer(context.Background(), resp.ID)
 	}
 
@@ -133,7 +132,7 @@ func worker(id int, u Uruk, messages <-chan saurontypes.UrukMessage) {
 	for message := range messages {
 		err := u.executeJob(message)
 		if err != nil {
-			u.logError("Error executing job\n"+message.String(), err)
+			u.Logger.logError("Error executing job\n"+message.String(), err)
 		}
 	}
 }
@@ -142,7 +141,7 @@ func worker(id int, u Uruk, messages <-chan saurontypes.UrukMessage) {
 // it takes queue name as parameter to determine which
 // queue to listen to
 func (u Uruk) Start(qName string) {
-	u.logStart(qName)
+	u.Logger.logStart(qName, u)
 	jobs := make(chan saurontypes.UrukMessage, 10)
 
 	for index := 0; index < u.NumOfWorkers; index++ {
@@ -157,7 +156,7 @@ func (u Uruk) Start(qName string) {
 		}
 		err = json.Unmarshal([]byte(msg), &urukMessage)
 		if err != nil {
-			u.logError("Unable to unmarshall\n---\n"+msg+"---\n", err)
+			u.Logger.logError("Unable to unmarshall\n---\n"+msg+"---\n", err)
 		}
 		jobs <- urukMessage
 	}
