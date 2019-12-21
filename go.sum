@@ -73,6 +73,8 @@ github.com/step/angmar v0.0.0-20191127095208-be1628f1e495 h1:9gqbiMqCZukIMButimz
 github.com/step/angmar v0.0.0-20191127095208-be1628f1e495/go.mod h1:4LPjMZg2HkeLVnyBONoM7K7155sZGWPSC0P8KT/BSsQ=
 github.com/step/angmar v0.0.0-20191127113211-fbeaab94f9b7 h1:uM+vJ62ChyKYhNDPEr0CZd13fSARftq8M3MuQLFTNMo=
 github.com/step/angmar v0.0.0-20191127113211-fbeaab94f9b7/go.mod h1:ogyQUrElRdW99J+htqaK5T3fy4aRM1iV9GoObaThkyU=
+github.com/step/angmar v0.0.0-20191218074306-d05fe94ef248 h1:c+XtCmdUHMZLYwpab0SSTfhPmPUhL5cO36LIWTpFW4w=
+github.com/step/angmar v0.0.0-20191218074306-d05fe94ef248/go.mod h1:ynlkIcV/MclHRDZbOltj9iGQi4v2QvXNd2lcZhrUqTg=
 github.com/step/saurontypes v0.0.0-20191120173813-320873fd7df0/go.mod h1:cnRju5jQlmOznLmd6w5/c72VyWUu3U77nTnsAqi9E80=
 github.com/step/saurontypes v0.0.0-20191122060554-e882d472f5d5 h1:wlXrzDH6+4iyYmI5+GOxRnqX1mkoRXs7sxbKD+29wDc=
 github.com/step/saurontypes v0.0.0-20191122060554-e882d472f5d5/go.mod h1:e6JKuJKVmA8EQXA//HbOobgDIl+/brqoaX363FzwUEo=
@@ -80,6 +82,8 @@ github.com/step/saurontypes v0.0.0-20191127094913-fbe832ecf56f h1:OGcu8QYGTlPCyD
 github.com/step/saurontypes v0.0.0-20191127094913-fbe832ecf56f/go.mod h1:Mp1tCyd5L2wC/QoBiqa3stAn7h8Q17gDyZ1jmj9MyXg=
 github.com/step/saurontypes v0.0.0-20191127114135-1c7b69a4e64f h1:j/eu1+uMZCN7so/8bG9PcHgJRmD4jOn52Ak9R94j8hk=
 github.com/step/saurontypes v0.0.0-20191127114135-1c7b69a4e64f/go.mod h1:Mp1tCyd5L2wC/QoBiqa3stAn7h8Q17gDyZ1jmj9MyXg=
+github.com/step/saurontypes v0.0.0-20191216070616-49830a7aa8ae h1:LGSUZPNnESlUUr7NYMt8buer2BKbmeJ49AcEGYzy7bI=
+github.com/step/saurontypes v0.0.0-20191216070616-49830a7aa8ae/go.mod h1:Mp1tCyd5L2wC/QoBiqa3stAn7h8Q17gDyZ1jmj9MyXg=
 github.com/step/uruk v0.0.0-20191120175724-3cff83f88e1b/go.mod h1:50ZonhII2bkKM85MCCAHKsI7TmxPMR2GoFrBAMHFQFw=
 github.com/step/uruk v0.0.0-20191127095430-9a65d97ffd22/go.mod h1:Gv3Qfl5lOUYImW/WP6txnRiLjxaKiFwt6iupGHhwrF0=
 github.com/step/uruk v0.0.0-20191127114036-eb84283fad8d/go.mod h1:mJzoPWj/eT8v8nivRg3uWJRLjKqErA+xlib+K4CYPB8=
