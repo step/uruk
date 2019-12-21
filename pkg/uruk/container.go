@@ -1,12 +1,11 @@
 package uruk
 
 import (
-	"encoding/json"
 	"archive/tar"
 	"bytes"
 	"context"
+	"encoding/json"
 	"io"
-	"os"
 	"time"
 
 	"github.com/docker/docker/api/types"
@@ -38,11 +37,10 @@ func UntarWithoutGz(reader io.Reader, extractor Extractor) (rerr error) {
 
 func (u Uruk) createContainer(message saurontypes.UrukMessage) (container.ContainerCreateCreatedBody, error) {
 	name := message.ImageName
-	reader, err := u.DClient.ImagePull(context.Background(), name, types.ImagePullOptions{})
+	_, err := u.DClient.ImagePull(context.Background(), name, types.ImagePullOptions{})
 	if err != nil {
 		panic(err)
 	}
-	io.Copy(os.Stdout, reader)
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*15)
 	defer cancel()
